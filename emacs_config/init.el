@@ -59,3 +59,7 @@
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
 (add-hook 'prog-mode-hook '(lambda () (setq show-trailing-whitespace t)))
+
+(add-hook 'latex-mode-hook 'display-line-numbers-mode)
+(add-hook 'latex-mode-hook 'display-fill-column-indicator-mode)
+(add-hook 'latex-mode-hook '(lambda () (setq show-trailing-whitespace t)))
