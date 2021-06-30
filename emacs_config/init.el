@@ -8,13 +8,14 @@
 
 ;; If you get "gpg: Can't check signature: No public key"
 ;; Then:
-;; 1. (setq package-check-signature nil)
-;; 2. M-x package-install RET gnu-elpa-keyring-update RET
-;; 3. remove 1.
+;; 1. M-: (setq package-check-signature nil) RET
+;; 2. M-x package-refresh-contents
+;; 3. M-x package-install RET gnu-elpa-keyring-update RET
+;; 4. quit and reopen emacs
+;; 5. M-x package-refresh-contents
 
 ;; Packages I use:
 ;;   better-defaults
-;;   fill-column-indicator
 ;;   gnu-elpa-keyring-update
 ;;   rust-mode
 ;;   scad-mode
@@ -55,17 +56,6 @@
 (require 'better-defaults)
 (save-place-mode 0) ;; disable save place
 
-
-;; Turns on and fixes linum
-(require 'linum)
-(global-linum-mode 1)
-(setq linum-format "%3d |")
-
-
-;; 80 column mode
-(require 'fill-column-indicator)
-(setq fci-rule-color "darkblue")
-(setq fci-rule-column 81)
-(define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
-(global-fci-mode 1)
-
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
+(add-hook 'prog-mode-hook '(lambda () (setq show-trailing-whitespace t)))
