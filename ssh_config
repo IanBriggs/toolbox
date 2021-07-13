@@ -1,0 +1,155 @@
+
+
+Host *
+  ServerAliveInterval 120
+  ServerAliveCountMax 16
+
+XAuthLocation /opt/X11/bin/xauth
+
+#+------------------------------------------------------------------------------+
+#| git identities                                                               |
+#+------------------------------------------------------------------------------+
+
+Host bitbucket.com
+     Hostname bitbucket.com
+     User
+     IdentityFile ~/.ssh/bitbucket_rsa
+
+Host github.com
+     HostName github.com
+     User git
+     IdentityFile ~/.ssh/github_rsa
+
+Host gitlab.com
+     HostName gitlab.com
+     User git
+     IdentityFile ~/.ssh/gitlab_rsa
+
+Host gitlab.flux.utah.edu
+     HostName gitlab.flux.utah.edu
+     User git
+     IdentityFile ~/.ssh/gitlabflux_rsa
+
+
+
+
+#+------------------------------------------------------------------------------+
+#| Machines                                                                     |
+#+------------------------------------------------------------------------------+
+
+# Gauss Machines
+
+Host bih
+     HostName bihexal.cs.utah.edu
+     User ibriggs
+     IdentityFile ~/.ssh/bihexal_rsa
+
+Host deg
+     HostName degauss.cs.utah.edu
+     User ibriggs
+     IdentityFile ~/.ssh/degauss_rsa
+
+Host for
+     HostName formal.cs.utah.edu
+     User ibriggs
+     IdentityFile ~/.ssh/formal_rsa
+
+Host fra
+     HostName fractus.cs.utah.edu
+     User ibriggs
+     IdentityFile ~/.ssh/fractus_rsa
+
+Host kep
+     HostName kepler.cs.utah.edu
+     User ibriggs
+     IdentityFile ~/.ssh/kepler_rsa
+
+Host qua
+     HostName quadnix.cs.utah.edu
+     User ibriggs
+     IdentityFile ~/.ssh/quadnix_rsa
+
+
+
+
+# University of Utah CS Dept.
+
+Host lab1-1 lab1-2 lab1-3 lab1-4 lab1-5 lab1-6 lab1-7 lab1-8 lab1-9 lab1-10 lab1-11 lab1-12 lab1-13 lab1-14 lab1-15 lab1-16 lab1-17 lab1-18 lab1-19 lab1-20 lab1-21 lab1-22 lab1-23 lab1-24 lab1-25 lab1-26 lab1-27 lab1-28 lab1-29 lab1-30 lab1-31 lab1-32 lab1-33 lab1-34 lab1-35 lab1-36 lab1-37 lab1-38 lab1-39 lab1-40
+     HostName %h.cs.utah.edu
+     User ibriggs
+     IdentityFile ~/.ssh/cade_rsa
+
+Host lab2-1 lab2-2 lab2-3 lab2-4 lab2-5 lab2-6 lab2-7 lab2-8 lab2-9 lab2-10 lab2-11 lab2-12 lab2-13 lab2-14 lab2-15 lab2-16 lab2-17 lab2-18 lab2-19 lab2-20 lab2-21 lab2-22 lab2-23 lab2-24 lab2-25 lab2-26 lab2-27 lab2-28 lab2-29 lab2-30 lab2-31 lab2-32 lab2-33 lab2-34 lab2-35
+     HostName %h.cs.utah.edu
+     User ibriggs
+     IdentityFile ~/.ssh/cade_rsa
+
+Host lab8-1 lab8-2 lab8-3 lab8-4 lab8-5 lab8-6 lab8-7 lab8-8 lab8-9 lab8-10 lab8-11 lab8-12 lab8-13 lab8-14 lab8-15 lab8-16 lab8-17 lab8-18 lab8-19 lab8-20 lab8-21 lab8-22 lab8-23 lab8-24 lab8-25 lab8-26 lab8-27 lab8-28 lab8-29 lab8-30 lab8-31 lab8-32
+     HostName %h.cs.utah.edu
+     User ibriggs
+     IdentityFile ~/.ssh/cade_rsa
+
+Host shell
+     HostName shell.cs.utah.edu
+     User ibriggs
+     IdentityFile ~/.ssh/shell_rsa
+
+
+# Washington Machines
+Host warfa
+     HostName warfa.cs.washington.edu
+     User ibriggs
+     IdentityFile ~/.ssh/warfa_rsa
+
+# CHPC Machines
+
+Host kin
+     HostName kingspeak.chpc.utah.edu
+     User u0692013
+     # No id file allowed
+
+
+
+
+# Emulab Machines
+
+Host emu
+     HostName users.emulab.net
+     User ibriggs
+     IdentityFile ~/.ssh/emulab_rsa
+
+
+
+
+# Personal Machines
+
+Host int
+     HostName integrus.cs.utah.edu
+     User ibriggs
+     IdentityFile ~/.ssh/integrus_rsa
+
+
+
+
+# LLNL Machines
+
+Host cab
+     Hostname cab.llnl.gov
+     User briggs20
+     # No id file allowed
+
+Host oslic
+     Hostname oslic.llnl.gov
+     User briggs20
+     # No id file allowed
+
+Host quartz
+     Hostname quartz.llnl.gov
+     User briggs20
+     # No id file allowed
+
+Host ray
+     Hostname ray.llnl.gov
+     User briggs20
+     # No id file allowed
+

@@ -1,0 +1,78 @@
+;; Where I keep .el files
+(add-to-list 'load-path "~/.emacs.d/el_files")
+
+;; 80 column mode
+(require 'fill-column-indicator)
+(setq fci-rule-color "darkblue")
+(setq fci-rule-column 81)
+(define-globalized-minor-mode global-fci-mode fci-mode (lambda () (fci-mode 1)))
+(global-fci-mode 1)
+
+;; visible trailing whitespace that works with fci
+(require 'whitespace)
+(setq-default whitespace-style '(face trailing))
+(setq-default whitespace-line-column 80)
+(global-whitespace-mode 1)
+
+;; Turns on and fixes linum
+(require 'linum)
+(global-linum-mode 1)
+(setq linum-format "%3d |")
+
+;; General UI tweeks
+(menu-bar-mode -1)
+(column-number-mode 1)
+(show-paren-mode 1)
+(setq inhibit-startup-screen t)
+(setq inhibit-splash-screen t)
+(setq inhibit-startup-message t)
+(setq initial-scratch-message "")
+
+;; Adds mouse support
+(unless window-system
+(require 'mouse)
+(xterm-mouse-mode t)
+(defun track-mode (e))
+(setq mouse-sel-mode t))
+
+(global-set-key [mouse-4] '(lambda ()
+(interactive)
+(scroll-down 1)))
+(global-set-key [mouse-5] '(lambda ()
+(interactive)
+(scroll-up 1)))
+
+;; Stop the backup files from being annoying
+(setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
+backup-by-copying t    ; Don't delink hardlinks
+version-control t      ; Use version numbers on backups
+delete-old-versions t  ; Automatically delete excess backups
+kept-new-versions 20   ; how many of the newest versions to keep
+kept-old-versions 5    ; and how many of the old
+)
+
+
+
+
+;; Languages
+
+;; CUDA
+(autoload 'cuda-mode "cuda-mode.el")
+(add-to-list 'auto-mode-alist '("\\.cu\\'" . cuda-mode))
+
+;; Flex
+(autoload 'flex-mode "flex-mode.el")
+(add-to-list 'auto-mode-alist '("\\.l\\'" . flex-mode))
+
+;; Graphviz-dot
+(autoload 'graphviz-dot-mode "graphviz-dot-mode.el")
+(add-to-list 'auto-mode-alist '("\\.dot\\'" . graphviz-dot-mode))
+(add-to-list 'auto-mode-alist '("\\.gv\\'" . graphviz-dot-mode))
+
+;; Rust
+(autoload 'rust-mode "rust-mode.el")
+(add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-mode))
+
+;; OpenSCAD
+(autoload 'scad-mode "scad-mode.el")
+(add-to-list 'auto-mode-alist '("\\.scad\\'" . scad-mode))
