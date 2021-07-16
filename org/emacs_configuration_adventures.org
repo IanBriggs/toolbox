@@ -1,0 +1,279 @@
+#+title: Emacs Configuration Adventure
+#+author: Ian Briggs
+
+* TODO Things for this file
+  - Choose autocomplete (currently ido)
+  - Find out more about ispell/flyspell and custom dictionaries
+  - look at ido, ivy, ivy-rich, counsel, company, smex, ido-hacks
+  - look at magit
+  - there is a way to not auto indent, but also delete trailing whitespace
+
+
+ To turn this into =init.el=, run ~org-babel-tangle~ (bound to =C-c C-v t=).
+
+
+* Learning elisp conventions or emacs things
+  - =setf= vs =setq= :: [[https://www.sanfoundry.com/lisp-questions-answers-difference-between-setq-setf/][quiz with answers]]
+  - monitoring file :: =M-x auto-revert-mode= will cause the buffer to auto update contents
+
+
+* Inspiration/Sources 
+  - [[https://github.com/pavpanchekha/dotfiles][Pavel]]
+  - [[http://pragmaticemacs.com/][PragmaticEmacs]]
+  - [[https://www.emacswiki.org/emacs/DotEmacsChallenge][emacs wiki tips]]
+
+
+* Terminal emulator
+  This configuration is designed for [[https://iterm2.com/][iTerm2]].
+  In addition I am using /Inconsolata Nerd Font/ which should provide the fun glyphs.
+  I also have the settings turned on:
+  - /Use built-in Powerline glyphs/
+  - /Enable mouse reporting/
+  - /Report mouse wheel events/
+
+
+* Version
+  My configuration supports emacs 27.2.
+  I don't care about supporting older versions of emacs.
+  If a system doesn't have it then I use [[https://brew.sh/][homebrew]], which supports Linux.
+  - [[https://emacs.stackexchange.com/questions/35335/how-to-test-for-specific-emacs-version-or-newer][test emacs version]]
+  - [[https://emacs.stackexchange.com/questions/19385/how-to-exit-from-emacs-init-file][exit from init]]
+
+  #+begin_src emacs-lisp :tangle init.el
+    ;; Don't use this config if emacs version is below 27.2
+    (if (version< emacs-version "27.2")
+        (with-current-buffer " *load*"
+          (goto-char (point-max))))
+  #+end_src
+
+
+* Customize
+  Move the auto generated stuff to its own file.
+  My goal is to have everything done in =init.el=, currently this is not the case.
+
+  #+begin_src emacs-lisp :tangle init.el
+    ;; Shunt off generated code
+    (setq custom-file (expand-file-name "~/.emacs.d/custom.el"))
+    (load custom-file)
+  #+end_src
+
+
+* Package system
+  I still use ='package=, with MEPLA.
+  If I find a compelling reason to I might switch to another package manager, or add other package sources.
+
+  #+begin_src emacs-lisp :tangle init.el
+    ;; MELPA
+    (require 'package)
+    (add-to-list 'package-archives
+                 '("melpa" . "https://melpa.org/packages/") t)
+    (package-initialize)
+  #+end_src
+
+  These are the packages I use
+
+  #+begin_src emacs-lisp :tangle init.el
+    ;; My added packages
+    (setq packages `(
+       airline-themes              
+       powerline
+       rust-mode
+       scad-mode
+       ))
+  #+end_src
+
+
+** Installing on a new system
+   First check if updates are available, then check that all packages are present.
+   This will make the first startup on a fresh machine slow, and might throw warnings.
+
+   #+begin_src emacs-lisp :tangle init.el
+     ;; Maybe refresh packages
+     (unless package-archive-contents (package-refresh-contents))
+
+     ;; Install packages that are not on this machine
+     (dolist (package packages)
+       (unless (package-installed-p package) (package-install package)))
+   #+end_src
+
+
+* Sort of better defaults
+  I don't want all the changes from [[https://git.sr.ht/~technomancy/better-defaults][better-defaults]], here are the ones I do.
+
+  #+begin_src emacs-lisp :tangle init.el
+    ;; Autocomplete-like thing
+    (ido-mode t)
+    (setq ido-enable-flex-matching t)
+
+    ;; Remove menu bar
+    (menu-bar-mode -1)
+
+    ;; Give better names when opening the same file in diff dirs
+    (require 'uniquify)
+    (setq uniquify-buffer-name-style 'forward)
+
+    ;; Highlight matching parens
+    (show-paren-mode 1)
+
+    ;; Don't use tabs (what about files already using tabs?)
+    (setq-default indent-tabs-mode nil)
+
+    ;; Force newline at end of file
+    (setq require-final-newline t)
+
+    ;; Don't use stale files
+    (setq load-prefer-newer t)
+  #+end_src
+
+
+* Mouse
+  Getting a mouse working in terminal emacs has a long history.
+  I use iTerm2 with the settings /Enable mouse reporting/ and /Report mouse wheel events/ enabled.
+  Some related pages:
+  - [[https://github.com/syl20bnr/spacemacs/issues/4591][spacemacs bug]]
+  - [[https://www.emacswiki.org/emacs/iTerm2][emacs wiki for iTerm2]]
+  - [[https://github.com/ataylor284/emacs-shell-mode-iterm-extensions][possible mode I could use]]
+
+  #+begin_src emacs-lisp :tangle init.el
+    ;; Adds mouse support in terminal
+    (require 'mouse)
+    (xterm-mouse-mode t)
+    (defun track-mode (e))
+    (setq mouse-sel-mode t)
+
+    ;;(global-set-key (kbd "<mouse-4>") 'scroll-down-line)
+    ;;(global-set-key (kbd "<mouse-5>") 'scroll-up-line)
+
+    ;;(global-set-key [mouse-4] '(lambda () (interactive) (scroll-down 1)))
+    ;;(global-set-key [mouse-5] '(lambda () (interactive) (scroll-up 1)))
+
+    (if (load "mwheel" t)
+        (mwheel-install))
+
+    ;; ;; turn on mouse wheel scrolling
+    ;; (defun sd-mousewheel-scroll-up (event)
+    ;;   "Scroll window under mouse up by five lines."
+    ;;   (interactive "e")
+    ;;   (let ((current-window (selected-window)))
+    ;;     (unwind-protect
+    ;;         (progn 
+    ;;           (select-window (posn-window (event-start event)))
+    ;;           (scroll-up 2))
+    ;;       (select-window current-window))))
+
+    ;; (defun sd-mousewheel-scroll-down (event)
+    ;;   "Scroll window under mouse down by five lines."
+    ;;   (interactive "e")
+    ;;   (let ((current-window (selected-window)))
+    ;;     (unwind-protect
+    ;;         (progn 
+    ;;           (select-window (posn-window (event-start event)))
+    ;;           (scroll-down 2))
+    ;;       (select-window current-window))))
+
+    ;; (global-set-key (kbd "<mouse-5>") 'sd-mousewheel-scroll-up)
+    ;; (global-set-key (kbd "<mouse-4>") 'sd-mousewheel-scroll-down)
+  #+end_src
+
+
+* Backup files
+  Seeing =file.py~= everywhere drove me crazy, and the backups just get wiped anyway.
+  Instead keep them all hidden for when you remove a file you really needed.
+
+  #+begin_src emacs-lisp :tangle init.el
+    ;; Stop the backup files from being annoying
+    (setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
+          backup-by-copying t    ; Don't delink hardlinks
+          version-control t      ; Use version numbers on backups
+          delete-old-versions t  ; Automatically delete excess backups
+          kept-new-versions 20   ; how many of the newest versions to keep
+          kept-old-versions 5)   ; and how many of the old
+  #+end_src
+
+
+* Other interface configurations
+  Credits:
+  - [[https://www.reddit.com/r/emacs/comments/3u0d0u/how_do_i_make_the_vertical_window_divider_more/][vertical divider]]
+  #+begin_src emacs-lisp :tangle init.el
+    ;; Turn on powerline
+    (require 'airline-themes)
+    (load-theme 'airline-angr t)
+
+    ;; Always show trailing whitespace
+    (setq show-trailing-whitespace t)
+
+    ;; Put column number in the bottom bar
+    (column-number-mode t)
+
+    ;; Skip startup screen
+    (setf inhibit-startup-screen t
+          inhibit-startup-message t
+          inhibit-startup-echo-area-message t)
+
+    ;; Silence bell
+    (setq ring-bell-function 'ignore)
+
+    ;; Make vertical seperator pretty
+    ;; (set-display-table-slot standard-display-table 5 ?│)
+    (set-display-table-slot standard-display-table 5 ? )
+    ;;(set-face-background 'vertical-border "gray")
+    ;;(set-face-foreground 'vertical-border (face-background 'vertical-border))
+
+    ;; Set fill column to be 80
+    (setq-default display-fill-column-indicator-column 80)
+
+    ;; Scratch buffer
+    ;; maybe set to journal if ~/Dropbox is present...
+    (setq initial-scratch-message "")
+    (setq inhibit-startup-message t)
+    (setq initial-major-mode 'fundamental-mode)
+
+    ;; Preserve hard links to the file you’re editing
+    ;; (this is especially important if you edit system files).
+    (setq backup-by-copying-when-linked t)
+
+    ;; Preserve the owner and group of the file you’re editing
+    ;; (this is especially important if you edit files as root).
+    (setq backup-by-copying-when-mismatch t)
+  #+end_src
+
+
+* Programming configuration
+  #+begin_src emacs-lisp :tangle init.el
+    ;; Programming defaults
+    (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
+    (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  #+end_src
+
+
+* Org Mode
+  I'm treading on hallowed ground here.
+  So let's make org mode pretty on the terminal.
+  - [[https://orgmode.org/manual/Special-Symbols.html][special symbols]]
+  - [[https://mstempl.netlify.app/post/beautify-org-mode/][blog page]]
+  - [[https://www.reddit.com/r/emacs/comments/estlwh/possibility_of_making_the_org_mode_less_ugly/ffddxhn/][hack]]
+  - [[https://www.reddit.com/r/emacs/comments/brt0sk/prettifysymbolsmode_is_so_cool/][other thing]]
+    
+  #+begin_src emacs-lisp :tangle init.el
+    ;; Use UTF-8 for latex symbols
+    (setq org-pretty-entities t)
+
+    ;; Hide formatting markers, like _underline_
+    (setf org-hide-emphasis-markers t)
+
+    ;; Things to include with org mode
+    (add-hook 'org-mode-hook 'flyspell-mode)
+    (add-hook 'org-mode-hook 'visual-line-mode)
+  #+end_src
+
+
+* LaTeX Mode
+
+  #+begin_src emacs-lisp :tangle init.el
+  ;; Latex customizations
+  (add-hook 'latex-mode-hook 'display-fill-column-indicator-mode)
+  (add-hook 'latex-mode-hook 'display-line-numbers-mode)
+  (add-hook 'latex-mode-hook 'flyspell-mode)
+  (add-hook 'latex-mode-hook (lambda () (electric-indent-mode -1)))
+  #+end_src
+
