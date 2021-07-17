@@ -17,7 +17,7 @@
   - monitoring file :: =M-x auto-revert-mode= will cause the buffer to auto update contents
 
 
-* Inspiration/Sources 
+* Inspiration/Sources
   - [[https://github.com/pavpanchekha/dotfiles][Pavel]]
   - [[http://pragmaticemacs.com/][PragmaticEmacs]]
   - [[https://www.emacswiki.org/emacs/DotEmacsChallenge][emacs wiki tips]]
@@ -75,7 +75,7 @@
   #+begin_src emacs-lisp :tangle init.el
     ;; My added packages
     (setq packages `(
-       airline-themes              
+       airline-themes
        powerline
        rust-mode
        scad-mode
@@ -133,13 +133,18 @@
   - [[https://github.com/syl20bnr/spacemacs/issues/4591][spacemacs bug]]
   - [[https://www.emacswiki.org/emacs/iTerm2][emacs wiki for iTerm2]]
   - [[https://github.com/ataylor284/emacs-shell-mode-iterm-extensions][possible mode I could use]]
+  - [[https://www.emacswiki.org/emacs/SmoothScrolling][scrolling]]
 
   #+begin_src emacs-lisp :tangle init.el
     ;; Adds mouse support in terminal
+
+    (require 'mwheel)
     (require 'mouse)
     (xterm-mouse-mode t)
-    (defun track-mode (e))
-    (setq mouse-sel-mode t)
+    (mouse-wheel-mode t)
+
+    ;; (defun track-mode (e))
+    ;; (setq mouse-sel-mode t)
 
     ;;(global-set-key (kbd "<mouse-4>") 'scroll-down-line)
     ;;(global-set-key (kbd "<mouse-5>") 'scroll-up-line)
@@ -147,8 +152,8 @@
     ;;(global-set-key [mouse-4] '(lambda () (interactive) (scroll-down 1)))
     ;;(global-set-key [mouse-5] '(lambda () (interactive) (scroll-up 1)))
 
-    (if (load "mwheel" t)
-        (mwheel-install))
+    ;; (if (load "mwheel" t)
+    ;;     (mwheel-install))
 
     ;; ;; turn on mouse wheel scrolling
     ;; (defun sd-mousewheel-scroll-up (event)
@@ -156,7 +161,7 @@
     ;;   (interactive "e")
     ;;   (let ((current-window (selected-window)))
     ;;     (unwind-protect
-    ;;         (progn 
+    ;;         (progn
     ;;           (select-window (posn-window (event-start event)))
     ;;           (scroll-up 2))
     ;;       (select-window current-window))))
@@ -166,7 +171,7 @@
     ;;   (interactive "e")
     ;;   (let ((current-window (selected-window)))
     ;;     (unwind-protect
-    ;;         (progn 
+    ;;         (progn
     ;;           (select-window (posn-window (event-start event)))
     ;;           (scroll-down 2))
     ;;       (select-window current-window))))
@@ -253,7 +258,7 @@
   - [[https://mstempl.netlify.app/post/beautify-org-mode/][blog page]]
   - [[https://www.reddit.com/r/emacs/comments/estlwh/possibility_of_making_the_org_mode_less_ugly/ffddxhn/][hack]]
   - [[https://www.reddit.com/r/emacs/comments/brt0sk/prettifysymbolsmode_is_so_cool/][other thing]]
-    
+
   #+begin_src emacs-lisp :tangle init.el
     ;; Use UTF-8 for latex symbols
     (setq org-pretty-entities t)
@@ -276,4 +281,3 @@
   (add-hook 'latex-mode-hook 'flyspell-mode)
   (add-hook 'latex-mode-hook (lambda () (electric-indent-mode -1)))
   #+end_src
-

@@ -15,7 +15,7 @@
 
 ;; My added packages
 (setq packages `(
-   airline-themes              
+   airline-themes
    powerline
    rust-mode
    scad-mode
@@ -52,10 +52,14 @@
 (setq load-prefer-newer t)
 
 ;; Adds mouse support in terminal
+
+(require 'mwheel)
 (require 'mouse)
 (xterm-mouse-mode t)
-(defun track-mode (e))
-(setq mouse-sel-mode t)
+(mouse-wheel-mode t)
+
+;; (defun track-mode (e))
+;; (setq mouse-sel-mode t)
 
 ;;(global-set-key (kbd "<mouse-4>") 'scroll-down-line)
 ;;(global-set-key (kbd "<mouse-5>") 'scroll-up-line)
@@ -63,8 +67,8 @@
 ;;(global-set-key [mouse-4] '(lambda () (interactive) (scroll-down 1)))
 ;;(global-set-key [mouse-5] '(lambda () (interactive) (scroll-up 1)))
 
-(if (load "mwheel" t)
-    (mwheel-install))
+;; (if (load "mwheel" t)
+;;     (mwheel-install))
 
 ;; ;; turn on mouse wheel scrolling
 ;; (defun sd-mousewheel-scroll-up (event)
@@ -72,7 +76,7 @@
 ;;   (interactive "e")
 ;;   (let ((current-window (selected-window)))
 ;;     (unwind-protect
-;;         (progn 
+;;         (progn
 ;;           (select-window (posn-window (event-start event)))
 ;;           (scroll-up 2))
 ;;       (select-window current-window))))
@@ -82,7 +86,7 @@
 ;;   (interactive "e")
 ;;   (let ((current-window (selected-window)))
 ;;     (unwind-protect
-;;         (progn 
+;;         (progn
 ;;           (select-window (posn-window (event-start event)))
 ;;           (scroll-down 2))
 ;;       (select-window current-window))))
