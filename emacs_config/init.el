@@ -155,7 +155,7 @@
 
 ;; Things to include with org mode
 (add-hook 'org-mode-hook 'flyspell-mode)
-(add-hook 'org-mode-hook 'visual-line-mode)
+(add-hook 'org-mode-hook 'display-fill-column-indicator-mode)
 
 ;; Latex customizations
 (add-hook 'latex-mode-hook 'display-fill-column-indicator-mode)

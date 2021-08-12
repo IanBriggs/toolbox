@@ -2,12 +2,14 @@
 #+author: Ian Briggs
 
 * TODO Things for this file
-  - Choose autocomplete (currently ido)
+  - Choose auto-complete (currently ido)
   - Find out more about ispell/flyspell and custom dictionaries
   - look at ido, ivy, ivy-rich, counsel, company, smex, ido-hacks
   - look at magit
   - there is a way to not auto indent, but also delete trailing whitespace
-
+    - [[https://emacs.stackexchange.com/questions/52019/how-to-stop-emacs-from-deleting-trailing][here]]
+  - maybe read [[https://www.gnu.org/software/emacs/manual/html_node/ediff/Window-and-Frame-Configuration.html][this]]
+  - [[https://www.emacswiki.org/emacs/AutoSave][auto-save]] [[https://emacs.stackexchange.com/questions/17210/how-to-place-all-auto-save-files-in-a-directory][answer]]
 
  To turn this into =init.el=, run ~org-babel-tangle~ (bound to =C-c C-v t=).
 
@@ -25,7 +27,7 @@
 
 * Terminal emulator
   This configuration is designed for [[https://iterm2.com/][iTerm2]].
-  In addition I am using /Inconsolata Nerd Font/ which should provide the fun glyphs.
+  In addition I am using /Inconsolata/.
   I also have the settings turned on:
   - /Use built-in Powerline glyphs/
   - /Enable mouse reporting/
@@ -268,7 +270,7 @@
 
     ;; Things to include with org mode
     (add-hook 'org-mode-hook 'flyspell-mode)
-    (add-hook 'org-mode-hook 'visual-line-mode)
+    (add-hook 'org-mode-hook 'display-fill-column-indicator-mode)
   #+end_src
 
 
