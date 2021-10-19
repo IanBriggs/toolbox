@@ -11,12 +11,15 @@
   - maybe read [[https://www.gnu.org/software/emacs/manual/html_node/ediff/Window-and-Frame-Configuration.html][this]]
   - [[https://www.emacswiki.org/emacs/AutoSave][auto-save]] [[https://emacs.stackexchange.com/questions/17210/how-to-place-all-auto-save-files-in-a-directory][answer]]
 
- To turn this into =init.el=, run ~org-babel-tangle~ (bound to =C-c C-v t=).
+
+To turn this into =init.el=, run ~org-babel-tangle~ (bound to =C-c C-v t=).
 
 
 * Learning elisp conventions or emacs things
   - =setf= vs =setq= :: [[https://www.sanfoundry.com/lisp-questions-answers-difference-between-setq-setf/][quiz with answers]]
-  - monitoring file :: =M-x auto-revert-mode= will cause the buffer to auto update contents
+  - monitoring file :: =M-x auto-revert-mode= will cause the buffer to auto
+    update contents
+  - run command is =M-x <command>=, and run elisp is =M-: <elisp>=
 
 
 * Inspiration/Sources
@@ -62,7 +65,8 @@
 
 * Package system
   I still use ='package=, with MEPLA.
-  If I find a compelling reason to I might switch to another package manager, or add other package sources.
+  If I find a compelling reason to I might switch to another package manager,
+    or add other package sources.
 
   #+begin_src emacs-lisp :tangle init.el
     ;; MELPA
@@ -77,7 +81,9 @@
   #+begin_src emacs-lisp :tangle init.el
     ;; My added packages
     (setq packages `(
+       afternoon-theme
        airline-themes
+       markdown-mode
        powerline
        rust-mode
        scad-mode
@@ -86,8 +92,10 @@
 
 
 ** Installing on a new system
-   First check if updates are available, then check that all packages are present.
-   This will make the first startup on a fresh machine slow, and might throw warnings.
+   First check if updates are available, then check that all packages are
+     present.
+   This will make the first startup on a fresh machine slow, and might throw
+     warnings.
 
    #+begin_src emacs-lisp :tangle init.el
      ;; Maybe refresh packages
@@ -130,7 +138,8 @@
 
 * Mouse
   Getting a mouse working in terminal emacs has a long history.
-  I use iTerm2 with the settings /Enable mouse reporting/ and /Report mouse wheel events/ enabled.
+  I use iTerm2 with the settings /Enable mouse reporting/ and /Report mouse wheel
+    events/ enabled.
   Some related pages:
   - [[https://github.com/syl20bnr/spacemacs/issues/4591][spacemacs bug]]
   - [[https://www.emacswiki.org/emacs/iTerm2][emacs wiki for iTerm2]]
@@ -184,7 +193,8 @@
 
 
 * Backup files
-  Seeing =file.py~= everywhere drove me crazy, and the backups just get wiped anyway.
+  Seeing =file.py~= everywhere drove me crazy, and the backups just get wiped
+    anyway.
   Instead keep them all hidden for when you remove a file you really needed.
 
   #+begin_src emacs-lisp :tangle init.el
@@ -202,12 +212,13 @@
   Credits:
   - [[https://www.reddit.com/r/emacs/comments/3u0d0u/how_do_i_make_the_vertical_window_divider_more/][vertical divider]]
   #+begin_src emacs-lisp :tangle init.el
+    ;; Use a matching text theme
+    (require 'afternoon-theme)
+    (load-theme 'afternoon t)
+
     ;; Turn on powerline
     (require 'airline-themes)
     (load-theme 'airline-angr t)
-
-    ;; Always show trailing whitespace
-    (setq show-trailing-whitespace t)
 
     ;; Put column number in the bottom bar
     (column-number-mode t)
@@ -242,6 +253,9 @@
     ;; Preserve the owner and group of the file you’re editing
     ;; (this is especially important if you edit files as root).
     (setq backup-by-copying-when-mismatch t)
+
+    ;; Always show trailing whitespace
+    (setq-default show-trailing-whitespace t)
   #+end_src
 
 
@@ -269,17 +283,26 @@
     (setf org-hide-emphasis-markers t)
 
     ;; Things to include with org mode
-    (add-hook 'org-mode-hook 'flyspell-mode)
     (add-hook 'org-mode-hook 'display-fill-column-indicator-mode)
+    (add-hook 'org-mode-hook 'flyspell-mode)
+  #+end_src
+
+
+* Markdown Mode
+  #+begin_src emacs-lisp :tangle init.el
+    ;; Things to include with markdown mode
+    (add-hook 'markdown-mode-hook 'display-fill-column-indicator-mode)
+    (add-hook 'markdown-mode-hook 'display-line-numbers-mode)
+    (add-hook 'markdown-mode-hook 'flyspell-mode)
   #+end_src
 
 
 * LaTeX Mode
 
   #+begin_src emacs-lisp :tangle init.el
-  ;; Latex customizations
-  (add-hook 'latex-mode-hook 'display-fill-column-indicator-mode)
-  (add-hook 'latex-mode-hook 'display-line-numbers-mode)
-  (add-hook 'latex-mode-hook 'flyspell-mode)
-  (add-hook 'latex-mode-hook (lambda () (electric-indent-mode -1)))
+    ;; Latex customizations
+    (add-hook 'latex-mode-hook 'display-fill-column-indicator-mode)
+    (add-hook 'latex-mode-hook 'display-line-numbers-mode)
+    (add-hook 'latex-mode-hook 'flyspell-mode)
+    (add-hook 'latex-mode-hook (lambda () (electric-indent-mode -1)))
   #+end_src

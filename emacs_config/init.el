@@ -15,7 +15,9 @@
 
 ;; My added packages
 (setq packages `(
+   afternoon-theme
    airline-themes
+   markdown-mode
    powerline
    rust-mode
    scad-mode
@@ -102,12 +104,13 @@
       kept-new-versions 20   ; how many of the newest versions to keep
       kept-old-versions 5)   ; and how many of the old
 
+;; Use a matching text theme
+(require 'afternoon-theme)
+(load-theme 'afternoon t)
+
 ;; Turn on powerline
 (require 'airline-themes)
 (load-theme 'airline-angr t)
-
-;; Always show trailing whitespace
-(setq show-trailing-whitespace t)
 
 ;; Put column number in the bottom bar
 (column-number-mode t)
@@ -143,6 +146,9 @@
 ;; (this is especially important if you edit files as root).
 (setq backup-by-copying-when-mismatch t)
 
+;; Always show trailing whitespace
+(setq-default show-trailing-whitespace t)
+
 ;; Programming defaults
 (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
@@ -154,8 +160,13 @@
 (setf org-hide-emphasis-markers t)
 
 ;; Things to include with org mode
-(add-hook 'org-mode-hook 'flyspell-mode)
 (add-hook 'org-mode-hook 'display-fill-column-indicator-mode)
+(add-hook 'org-mode-hook 'flyspell-mode)
+
+;; Things to include with markdown mode
+(add-hook 'markdown-mode-hook 'display-fill-column-indicator-mode)
+(add-hook 'markdown-mode-hook 'display-line-numbers-mode)
+(add-hook 'markdown-mode-hook 'flyspell-mode)
 
 ;; Latex customizations
 (add-hook 'latex-mode-hook 'display-fill-column-indicator-mode)

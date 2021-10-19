@@ -1,0 +1,70 @@
+#+title: Zsh Configuration Adventure
+#+author: Ian Briggs
+
+
+To turn this into =init.sh=, run ~org-babel-tangle~ (bound to =C-c C-v t=).
+
+This is starting as changes to the default [[https://ohmyz.sh/][OhMyZsh]].
+I may later drop the dependence, but I'm not sure yet.
+
+
+* Homebrew
+  - I like having a general update and check command
+    #+begin_src bash :tangle init.sh
+      # Try for the good linux brew install
+      if [ -f  /home/linuxbrew/.linuxbrew/bin/brew ] ; then
+          eval $(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+      fi
+
+      # Cleanup old files not covered by brew cleanup
+      caskBasePath="$(brew --prefix )/Caskroom"
+
+      function __clean-cask
+      {
+          # Split $1 into an array
+          IFS=' ' read -ra caskArray <<< "$1"
+
+          local cask="${caskArray[0]}"
+          local caskDirectory="${caskBasePath}/${cask}"
+
+          # Slicing: array:startIndex:length ; exclude first and last elements
+          local versionsToRemove=("${caskArray[@]:1:${#caskArray[@]}-2}")
+
+          if [[ -n ${versionsToRemove} ]]; then
+              for versionToRemove in "${versionsToRemove[@]}"; do
+                  echo "Removing ${cask} ${versionToRemove}..."
+                  rm -fr "${caskDirectory}/${versionToRemove}"
+                  rm -fr "${caskDirectory}/.metadata/${versionToRemove}"
+              done
+          fi
+      }
+
+      function __clean-casks
+      {
+          while read cask; do
+              __clean-cask "${cask}"
+          done <<< "$( brew cask list --versions )"
+      }
+
+      # brew alias
+      alias brewit="brew update && brew upgrade && brew upgrade --cask && brew cleanup && brew doctor && __clean-casks"
+    #+end_src
+
+* Apple specific things
+  TODO guard this section
+  #+begin_src bash :tangle init.sh
+    PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"
+  #+end_src
+
+* setopts
+  #+begin_src bash :tangle init.sh
+    setopt ignore_eof
+  #+end_src
+
+
+* aliases
+  #+begin_src bash :tangle init.sh
+    # I like CLI emacs
+    alias emacs='emacs -nw'
+  #+end_src
+
