@@ -132,6 +132,9 @@
 ;; Set fill column to be 80
 (setq-default display-fill-column-indicator-column 80)
 
+;; Don't soft wrap lines
+(set-default 'truncate-lines t)
+
 ;; Scratch buffer
 ;; maybe set to journal if ~/Dropbox is present...
 (setq initial-scratch-message "")
