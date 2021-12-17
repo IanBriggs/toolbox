@@ -60,7 +60,8 @@ static char *gnus-pointer[] = {
      ("deleted" :foreground "#ff2c4b" :bold t)))
  '(nrepl-message-colors
    '("#183691" "#888a88" "#539100" "#888a88" "#0086b3" "#183691" "#539100" "#888a88"))
- '(package-selected-packages '(brutal-theme scad-mode rust-mode markdown-mode))
+ '(package-selected-packages
+   '(afternoon-theme brutal-theme scad-mode rust-mode markdown-mode))
  '(pdf-view-midnight-colors '("#888a88" . "#edf5dc"))
  '(pos-tip-background-color "#ffffffffffff")
  '(pos-tip-foreground-color "#78909C")

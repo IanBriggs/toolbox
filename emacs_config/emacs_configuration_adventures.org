@@ -20,7 +20,7 @@ To turn this into =init.el=, run ~org-babel-tangle~ (bound to =C-c C-v t=).
   - monitoring file :: =M-x auto-revert-mode= will cause the buffer to auto
     update contents
   - run command is =M-x <command>=, and run elisp is =M-: <elisp>=
-
+  - move to matching parenthesis is =M-C-f= and =M-C-b=
 
 * Inspiration/Sources
   - [[https://github.com/pavpanchekha/dotfiles][Pavel]]
@@ -262,6 +262,16 @@ To turn this into =init.el=, run ~org-babel-tangle~ (bound to =C-c C-v t=).
   #+end_src
 
 
+* Functions
+  #+begin_src emacs-lisp :tangle init.el
+    ;; Based on https://blog.lambda.cx/posts/emacs-align-columns
+    (defun align-non-space (BEG END)
+      "Aligns non-space columns seperated by 2 or more spaces"
+      (interactive "r")
+      (align-regexp BEG END "\\(\\s-\\s-\\s-*\\)\\S-+" 1 2 t))
+  #+end_src
+
+
 * Programming configuration
   #+begin_src emacs-lisp :tangle init.el
     ;; Programming defaults
@@ -308,4 +318,11 @@ To turn this into =init.el=, run ~org-babel-tangle~ (bound to =C-c C-v t=).
     (add-hook 'latex-mode-hook 'display-line-numbers-mode)
     (add-hook 'latex-mode-hook 'flyspell-mode)
     (add-hook 'latex-mode-hook (lambda () (electric-indent-mode -1)))
+  #+end_src
+
+
+* Rust Mode
+  #+begin_src emacs-lisp :tangle init.el
+    ;; Things to include with markdown mode
+    (add-hook 'rust-mode-hook (setq display-fill-column-indicator-column 100))
   #+end_src

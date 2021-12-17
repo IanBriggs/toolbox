@@ -152,6 +152,12 @@
 ;; Always show trailing whitespace
 (setq-default show-trailing-whitespace t)
 
+;; Based on https://blog.lambda.cx/posts/emacs-align-columns
+(defun align-non-space (BEG END)
+  "Aligns non-space columns seperated by 2 or more spaces"
+  (interactive "r")
+  (align-regexp BEG END "\\(\\s-\\s-\\s-*\\)\\S-+" 1 2 t))
+
 ;; Programming defaults
 (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
@@ -176,3 +182,6 @@
 (add-hook 'latex-mode-hook 'display-line-numbers-mode)
 (add-hook 'latex-mode-hook 'flyspell-mode)
 (add-hook 'latex-mode-hook (lambda () (electric-indent-mode -1)))
+
+;; Things to include with markdown mode
+(add-hook 'rust-mode-hook (setq display-fill-column-indicator-column 100))
