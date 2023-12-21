@@ -2,51 +2,40 @@
 #+author: Ian Briggs
 
 * TODO Things for this file
-  - Choose auto-complete (currently ido)
-  - Find out more about ispell/flyspell and custom dictionaries
-  - look at ido, ivy, ivy-rich, counsel, company, smex, ido-hacks
-  - look at magit
-  - there is a way to not auto indent, but also delete trailing whitespace
+  + there is a way to not auto indent, but also delete trailing whitespace
     - [[https://emacs.stackexchange.com/questions/52019/how-to-stop-emacs-from-deleting-trailing][here]]
-  - maybe read [[https://www.gnu.org/software/emacs/manual/html_node/ediff/Window-and-Frame-Configuration.html][this]]
-  - [[https://www.emacswiki.org/emacs/AutoSave][auto-save]] [[https://emacs.stackexchange.com/questions/17210/how-to-place-all-auto-save-files-in-a-directory][answer]]
+  + look up how to run document formatters
 
 
 To turn this into =init.el=, run ~org-babel-tangle~ (bound to =C-c C-v t=).
 
 
 * Learning elisp conventions or emacs things
-  - =setf= vs =setq= :: [[https://www.sanfoundry.com/lisp-questions-answers-difference-between-setq-setf/][quiz with answers]]
-  - monitoring file :: =M-x auto-revert-mode= will cause the buffer to auto
+  + =setf= vs =setq= :: [[https://www.sanfoundry.com/lisp-questions-answers-difference-between-setq-setf/][quiz with answers]]
+  + monitoring file :: =M-x auto-revert-mode= will cause the buffer to auto
     update contents
-  - run command is =M-x <command>=, and run elisp is =M-: <elisp>=
-  - move to matching parenthesis is =M-C-f= and =M-C-b=
+  + run command is =M-x <command>=, and run elisp is =M-: <elisp>=
+  + move to matching parenthesis is =M-C-f= and =M-C-b=
+
 
 * Inspiration/Sources
-  - [[https://github.com/pavpanchekha/dotfiles][Pavel]]
-  - [[http://pragmaticemacs.com/][PragmaticEmacs]]
-  - [[https://www.emacswiki.org/emacs/DotEmacsChallenge][emacs wiki tips]]
-
-
-* Terminal emulator
-  This configuration is designed for [[https://iterm2.com/][iTerm2]].
-  In addition I am using /Inconsolata/.
-  I also have the settings turned on:
-  - /Use built-in Powerline glyphs/
-  - /Enable mouse reporting/
-  - /Report mouse wheel events/
+  + [[https://github.com/pavpanchekha/dotfiles][Pavel]]
+  + [[http://pragmaticemacs.com/][PragmaticEmacs]]
+  + [[https://www.emacswiki.org/emacs/DotEmacsChallenge][emacs wiki tips]]
+  + [[https://github.com/ashton314/newbie.el][Ashton's newbie setup]]
+  + [[https://git.sr.ht/~ashton314/emacs-bedrock][Ashton's Bedrock setup]]
 
 
 * Version
-  My configuration supports emacs 27.2.
+  My configuration supports emacs 29.1.
   I don't care about supporting older versions of emacs.
   If a system doesn't have it then I use [[https://brew.sh/][homebrew]], which supports Linux.
   - [[https://emacs.stackexchange.com/questions/35335/how-to-test-for-specific-emacs-version-or-newer][test emacs version]]
   - [[https://emacs.stackexchange.com/questions/19385/how-to-exit-from-emacs-init-file][exit from init]]
 
   #+begin_src emacs-lisp :tangle init.el
-    ;; Don't use this config if emacs version is below 27.2
-    (if (version< emacs-version "27.2")
+    ;; Don't use this config if emacs version is below 29.1
+    (if (version< emacs-version "29.1")
         (with-current-buffer " *load*"
           (goto-char (point-max))))
   #+end_src
@@ -84,6 +73,7 @@ To turn this into =init.el=, run ~org-babel-tangle~ (bound to =C-c C-v t=).
        afternoon-theme
        airline-themes
        markdown-mode
+       multiple-cursors
        powerline
        rust-mode
        scad-mode
@@ -136,63 +126,8 @@ To turn this into =init.el=, run ~org-babel-tangle~ (bound to =C-c C-v t=).
   #+end_src
 
 
-* Mouse
-  Getting a mouse working in terminal emacs has a long history.
-  I use iTerm2 with the settings /Enable mouse reporting/ and /Report mouse wheel
-    events/ enabled.
-  Some related pages:
-  - [[https://github.com/syl20bnr/spacemacs/issues/4591][spacemacs bug]]
-  - [[https://www.emacswiki.org/emacs/iTerm2][emacs wiki for iTerm2]]
-  - [[https://github.com/ataylor284/emacs-shell-mode-iterm-extensions][possible mode I could use]]
-  - [[https://www.emacswiki.org/emacs/SmoothScrolling][scrolling]]
-
-  #+begin_src emacs-lisp :tangle init.el
-    ;; Adds mouse support in terminal
-
-    (require 'mwheel)
-    (require 'mouse)
-    (xterm-mouse-mode t)
-    (mouse-wheel-mode t)
-
-    ;; (defun track-mode (e))
-    ;; (setq mouse-sel-mode t)
-
-    ;;(global-set-key (kbd "<mouse-4>") 'scroll-down-line)
-    ;;(global-set-key (kbd "<mouse-5>") 'scroll-up-line)
-
-    ;;(global-set-key [mouse-4] '(lambda () (interactive) (scroll-down 1)))
-    ;;(global-set-key [mouse-5] '(lambda () (interactive) (scroll-up 1)))
-
-    ;; (if (load "mwheel" t)
-    ;;     (mwheel-install))
-
-    ;; ;; turn on mouse wheel scrolling
-    ;; (defun sd-mousewheel-scroll-up (event)
-    ;;   "Scroll window under mouse up by five lines."
-    ;;   (interactive "e")
-    ;;   (let ((current-window (selected-window)))
-    ;;     (unwind-protect
-    ;;         (progn
-    ;;           (select-window (posn-window (event-start event)))
-    ;;           (scroll-up 2))
-    ;;       (select-window current-window))))
-
-    ;; (defun sd-mousewheel-scroll-down (event)
-    ;;   "Scroll window under mouse down by five lines."
-    ;;   (interactive "e")
-    ;;   (let ((current-window (selected-window)))
-    ;;     (unwind-protect
-    ;;         (progn
-    ;;           (select-window (posn-window (event-start event)))
-    ;;           (scroll-down 2))
-    ;;       (select-window current-window))))
-
-    ;; (global-set-key (kbd "<mouse-5>") 'sd-mousewheel-scroll-up)
-    ;; (global-set-key (kbd "<mouse-4>") 'sd-mousewheel-scroll-down)
-  #+end_src
-
-
 * Backup files
+
   Seeing =file.py~= everywhere drove me crazy, and the backups just get wiped
     anyway.
   Instead keep them all hidden for when you remove a file you really needed.
@@ -208,61 +143,7 @@ To turn this into =init.el=, run ~org-babel-tangle~ (bound to =C-c C-v t=).
   #+end_src
 
 
-* Other interface configurations
-  Credits:
-  - [[https://www.reddit.com/r/emacs/comments/3u0d0u/how_do_i_make_the_vertical_window_divider_more/][vertical divider]]
-  #+begin_src emacs-lisp :tangle init.el
-    ;; Use a matching text theme
-    (require 'afternoon-theme)
-    (load-theme 'afternoon t)
-
-    ;; Turn on powerline
-    (require 'airline-themes)
-    (load-theme 'airline-angr t)
-
-    ;; Put column number in the bottom bar
-    (column-number-mode t)
-
-    ;; Skip startup screen
-    (setf inhibit-startup-screen t
-          inhibit-startup-message t
-          inhibit-startup-echo-area-message t)
-
-    ;; Silence bell
-    (setq ring-bell-function 'ignore)
-
-    ;; Make vertical seperator pretty
-    ;; (set-display-table-slot standard-display-table 5 ?│)
-    (set-display-table-slot standard-display-table 5 ? )
-    ;;(set-face-background 'vertical-border "gray")
-    ;;(set-face-foreground 'vertical-border (face-background 'vertical-border))
-
-    ;; Set fill column to be 80
-    (setq-default display-fill-column-indicator-column 80)
-
-    ;; Don't soft wrap lines
-    (set-default 'truncate-lines t)
-
-    ;; Scratch buffer
-    ;; maybe set to journal if ~/Dropbox is present...
-    (setq initial-scratch-message "")
-    (setq inhibit-startup-message t)
-    (setq initial-major-mode 'fundamental-mode)
-
-    ;; Preserve hard links to the file you’re editing
-    ;; (this is especially important if you edit system files).
-    (setq backup-by-copying-when-linked t)
-
-    ;; Preserve the owner and group of the file you’re editing
-    ;; (this is especially important if you edit files as root).
-    (setq backup-by-copying-when-mismatch t)
-
-    ;; Always show trailing whitespace
-    (setq-default show-trailing-whitespace t)
-  #+end_src
-
-
-* Functions
+* My functions
   #+begin_src emacs-lisp :tangle init.el
     ;; Based on https://blog.lambda.cx/posts/emacs-align-columns
     (defun align-non-space (BEG END)
@@ -277,6 +158,39 @@ To turn this into =init.el=, run ~org-babel-tangle~ (bound to =C-c C-v t=).
     ;; Programming defaults
     (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
     (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  #+end_src
+
+
+* Markdown Mode
+  #+begin_src emacs-lisp :tangle init.el
+    ;; Things to include with markdown mode
+    (add-hook 'markdown-mode-hook 'display-fill-column-indicator-mode)
+    (add-hook 'markdown-mode-hook 'display-line-numbers-mode)
+    (add-hook 'markdown-mode-hook 'flyspell-mode)
+  #+end_src
+
+
+* LaTeX Mode
+  #+begin_src emacs-lisp :tangle init.el
+    ;; Latex customizations
+    (add-hook 'latex-mode-hook 'display-fill-column-indicator-mode)
+    (add-hook 'latex-mode-hook 'display-line-numbers-mode)
+    (add-hook 'latex-mode-hook 'flyspell-mode)
+    (add-hook 'latex-mode-hook (lambda () (electric-indent-mode -1)))
+  #+end_src
+
+
+* Rust Mode
+  #+begin_src emacs-lisp :tangle init.el
+    ;; Things to include with markdown mode
+    (add-hook 'rust-mode-hook (setq display-fill-column-indicator-column 100))
+  #+end_src
+
+
+* FPCore is just scheme-ish
+  #+begin_src emacs-lisp :tangle init.el
+    ;; Things to include with markdown mode
+    (add-to-list 'auto-mode-alist '("\\.fpcore\\'" . scheme-mode))
   #+end_src
 
 
@@ -301,28 +215,179 @@ To turn this into =init.el=, run ~org-babel-tangle~ (bound to =C-c C-v t=).
   #+end_src
 
 
-* Markdown Mode
+
+* Other general interface configurations
+
   #+begin_src emacs-lisp :tangle init.el
-    ;; Things to include with markdown mode
-    (add-hook 'markdown-mode-hook 'display-fill-column-indicator-mode)
-    (add-hook 'markdown-mode-hook 'display-line-numbers-mode)
-    (add-hook 'markdown-mode-hook 'flyspell-mode)
+    ;; Use a matching text theme
+    (require 'afternoon-theme)
+    (load-theme 'afternoon t)
+
+    ;; Turn on powerline
+    (require 'airline-themes)
+    (load-theme 'airline-angr t)
+
+    ;; Put column number in the bottom bar
+    (column-number-mode t)
+
+    ;; Skip startup screen
+    (setf inhibit-startup-screen t
+          inhibit-startup-message t
+          inhibit-startup-echo-area-message t)
+
+    ;; Silence bell
+    (setq ring-bell-function 'ignore)
+
+    ;; Set fill column to be 80
+    (setq-default display-fill-column-indicator-column 80)
+
+    ;; Don't soft wrap lines
+    (set-default 'truncate-lines t)
+
+    ;; Scratch buffer
+    ;; maybe set to journal if ~/Dropbox is present...
+    (setq initial-scratch-message "")
+    (setq inhibit-startup-message t)
+    (setq initial-major-mode 'fundamental-mode)
+
+    ;; Preserve hard links to the file you’re editing
+    ;; (this is especially important if you edit system files).
+    (setq backup-by-copying-when-linked t)
+
+    ;; Preserve the owner and group of the file you’re editing
+    ;; (this is especially important if you edit files as root).
+    (setq backup-by-copying-when-mismatch t)
+
+    ;; Always show trailing whitespace
+    (setq-default show-trailing-whitespace t)
+
+    ;; multiple cursors!
+    (use-package multiple-cursors
+      :bind ("C-c C-SPC" . mc/edit-lines))
   #+end_src
 
 
-* LaTeX Mode
+* Terminal only settings
+  For now this config should work both with the GUI verison of emacs and the terminal.
+  The next sections are for terminal only configuration things.
+
+#+begin_src emacs-lisp :tangle init.el
+  ;; Configurations only for the terminal version
+  (unless (display-graphic-p)
+#+end_src
+
+** Terminal emulator
+  This configuration is designed for [[https://iterm2.com/][iTerm2]].
+  In addition I am using /Inconsolata/.
+  I also have the settings turned on:
+  - /Use built-in Powerline glyphs/
+  - /Enable mouse reporting/
+  - /Report mouse wheel events/
+
+
+** Mouse
+  Getting a mouse working in terminal emacs has a long history.
+  I use iTerm2 with the settings /Enable mouse reporting/ and /Report mouse wheel
+    events/ enabled.
+  Some related pages:
+  - [[https://github.com/syl20bnr/spacemacs/issues/4591][spacemacs bug]]
+  - [[https://www.emacswiki.org/emacs/iTerm2][emacs wiki for iTerm2]]
+  - [[https://github.com/ataylor284/emacs-shell-mode-iterm-extensions][possible mode I could use]]
+  - [[https://www.emacswiki.org/emacs/SmoothScrolling][scrolling]]
 
   #+begin_src emacs-lisp :tangle init.el
-    ;; Latex customizations
-    (add-hook 'latex-mode-hook 'display-fill-column-indicator-mode)
-    (add-hook 'latex-mode-hook 'display-line-numbers-mode)
-    (add-hook 'latex-mode-hook 'flyspell-mode)
-    (add-hook 'latex-mode-hook (lambda () (electric-indent-mode -1)))
+    ;; Adds mouse support in terminal
+    (require 'mwheel)
+    (require 'mouse)
+    (xterm-mouse-mode t)
+    (mouse-wheel-mode t)
+  #+end_src
+
+  Older ways of getting mouse wheel support.
+  (not part of the generated =init.el=)
+
+  #+begin_src emacs-lisp
+    ;; 4 variations on scrollwheel support
+
+    (global-set-key (kbd "<mouse-4>") 'scroll-down-line)
+    (global-set-key (kbd "<mouse-5>") 'scroll-up-line)
+
+    (global-set-key [mouse-4] '(lambda () (interactive) (scroll-down 1)))
+    (global-set-key [mouse-5] '(lambda () (interactive) (scroll-up 1)))
+
+    (if (load "mwheel" t) (mwheel-install))
+
+    (defun sd-mousewheel-scroll-up (event)
+      "Scroll window under mouse up by five lines."
+      (interactive "e")
+      (let ((current-window (selected-window)))
+	(unwind-protect
+	    (progn
+	      (select-window (posn-window (event-start event)))
+	      (scroll-up 2))
+	  (select-window current-window))))
+    (defun sd-mousewheel-scroll-down (event)
+      "Scroll window under mouse down by five lines."
+      (interactive "e")
+      (let ((current-window (selected-window)))
+	(unwind-protect
+	    (progn
+	      (select-window (posn-window (event-start event)))
+	      (scroll-down 2))
+	  (select-window current-window))))
+    (global-set-key (kbd "<mouse-5>") 'sd-mousewheel-scroll-up)
+    (global-set-key (kbd "<mouse-4>") 'sd-mousewheel-scroll-down)
+
   #+end_src
 
 
-* Rust Mode
+** Other _terminal_ interface configurations
+
+  Credits:
+  - [[https://www.reddit.com/r/emacs/comments/3u0d0u/how_do_i_make_the_vertical_window_divider_more/][vertical divider]]
+
   #+begin_src emacs-lisp :tangle init.el
-    ;; Things to include with markdown mode
-    (add-hook 'rust-mode-hook (setq display-fill-column-indicator-column 100))
+    ;; Make vertical seperator pretty
+    ;; (set-display-table-slot standard-display-table 5 ?│)
+    (set-display-table-slot standard-display-table 5 ? )
+    ;;(set-face-background 'vertical-border "gray")
+    ;;(set-face-foreground 'vertical-border (face-background 'vertical-border))
   #+end_src
+
+
+** End terminal only settings
+
+#+begin_src emacs-lisp :tangle init.el
+)
+#+end_src
+
+
+* GUI only settings
+
+#+begin_src emacs-lisp :tangle init.el
+  ;; Configurations only for the GUI version
+  (when (display-graphic-p)
+
+#+end_src
+
+** Other _terminal_ interface configurations
+
+  #+begin_src emacs-lisp :tangle init.el
+    ;; Remove GUI only top bar
+    (tool-bar-mode -1)
+
+    ;; Muscle memory from terminal, which can't differentiate C-- and C-_
+    (bind-key "C--" 'undo)
+
+    ;; Smoother scrolling
+    (pixel-scroll-precision-mode)
+
+
+  #+end_src
+
+
+** End GUI only settings
+
+#+begin_src emacs-lisp :tangle init.el
+)
+#+end_src
