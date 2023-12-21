@@ -1,5 +1,16 @@
-;; Don't use this config if emacs version is below 29.1
-(if (version< emacs-version "29.1")
+;; TODO for this file
+;; * look up tree sitter, everyone seems to love it
+;; * find an automatic spell checker that works like the one I use in VSC
+
+;; Inspiration/Sources
+;; * https://github.com/pavpanchekha/dotfiles
+;; * http://pragmaticemacs.com/
+;; * https://www.emacswiki.org/emacs/DotEmacsChallenge
+;; * https://github.com/ashton314/newbie.el
+;; * https://git.sr.ht/~ashton314/emacs-bedrock
+
+;; Don't use this config if emacs version is below 27.1
+(if (version< emacs-version "27.1")
     (with-current-buffer " *load*"
       (goto-char (point-max))))
 
@@ -10,19 +21,23 @@
 ;; MELPA
 (require 'package)
 (add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
+             '("melpa" . "https://test.melpa.org/packages/") t)
 (package-initialize)
 
 ;; My added packages
-(setq packages `(
-   afternoon-theme
-   airline-themes
-   markdown-mode
-   multiple-cursors
-   powerline
-   rust-mode
-   scad-mode
-   ))
+(setq packages
+      `(
+        afternoon-theme
+        airline-themes
+        magit
+        markdown-mode
+        multiple-cursors
+        powerline
+        rust-mode
+        scad-mode
+        verilog-mode
+        use-package
+        ))
 
 ;; Maybe refresh packages
 (unless package-archive-contents (package-refresh-contents))
@@ -45,7 +60,8 @@
 ;; Highlight matching parens
 (show-paren-mode 1)
 
-;; Don't use tabs (what about files already using tabs?)
+;; Don't use tabs
+;; TODO: what about files already using tabs?)
 (setq-default indent-tabs-mode nil)
 
 ;; Force newline at end of file
@@ -72,7 +88,7 @@
 (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 
-;; Things to include with markdown mode
+;; Markdown customizations
 (add-hook 'markdown-mode-hook 'display-fill-column-indicator-mode)
 (add-hook 'markdown-mode-hook 'display-line-numbers-mode)
 (add-hook 'markdown-mode-hook 'flyspell-mode)
@@ -83,21 +99,11 @@
 (add-hook 'latex-mode-hook 'flyspell-mode)
 (add-hook 'latex-mode-hook (lambda () (electric-indent-mode -1)))
 
-;; Things to include with markdown mode
+;; Rust customizations
 (add-hook 'rust-mode-hook (setq display-fill-column-indicator-column 100))
 
-;; Things to include with markdown mode
+;; FPCore customizations (just use scheme-mode)
 (add-to-list 'auto-mode-alist '("\\.fpcore\\'" . scheme-mode))
-
-;; Use UTF-8 for latex symbols
-(setq org-pretty-entities t)
-
-;; Hide formatting markers, like _underline_
-(setf org-hide-emphasis-markers t)
-
-;; Things to include with org mode
-(add-hook 'org-mode-hook 'display-fill-column-indicator-mode)
-(add-hook 'org-mode-hook 'flyspell-mode)
 
 ;; Use a matching text theme
 (require 'afternoon-theme)
@@ -125,7 +131,6 @@
 (set-default 'truncate-lines t)
 
 ;; Scratch buffer
-;; maybe set to journal if ~/Dropbox is present...
 (setq initial-scratch-message "")
 (setq inhibit-startup-message t)
 (setq initial-major-mode 'fundamental-mode)
@@ -138,6 +143,9 @@
 ;; (this is especially important if you edit files as root).
 (setq backup-by-copying-when-mismatch t)
 
+;; Muscle memory from terminal, which can't differentiate C-- and C-_
+(bind-key "C--" 'undo)
+
 ;; Always show trailing whitespace
 (setq-default show-trailing-whitespace t)
 
@@ -148,30 +156,24 @@
 ;; Configurations only for the terminal version
 (unless (display-graphic-p)
 
-;; Adds mouse support in terminal
-(require 'mwheel)
-(require 'mouse)
-(xterm-mouse-mode t)
-(mouse-wheel-mode t)
+  ;; Adds mouse support in terminal
+  (require 'mwheel)
+  (require 'mouse)
+  (xterm-mouse-mode t)
+  (mouse-wheel-mode t)
 
-;; Make vertical seperator pretty
-;; (set-display-table-slot standard-display-table 5 ?│)
-(set-display-table-slot standard-display-table 5 ? )
-;;(set-face-background 'vertical-border "gray")
-;;(set-face-foreground 'vertical-border (face-background 'vertical-border))
+  ;; Make vertical seperator pretty
+  (set-display-table-slot standard-display-table 5 ? )
 
-)
+  )
 
 ;; Configurations only for the GUI version
 (when (display-graphic-p)
 
-;; Remove GUI only top bar
-(tool-bar-mode -1)
+  ;; Remove GUI only top bar
+  (tool-bar-mode -1)
 
-;; Muscle memory from terminal, which can't differentiate C-- and C-_
-(bind-key "C--" 'undo)
+<  ;; Smoother scrolling
+  (pixel-scroll-precision-mode)
 
-;; Smoother scrolling
-(pixel-scroll-precision-mode)
-
-)
+  )
