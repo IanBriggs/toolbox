@@ -1,82 +1,25 @@
 ;; TODO for this file
 ;; * look up tree sitter, everyone seems to love it
 ;; * find an automatic spell checker that works like the one I use in VSC
+;; * trailing whitespace thing from doom
 
 ;; Inspiration/Sources
-;; * https://github.com/pavpanchekha/dotfiles
 ;; * http://pragmaticemacs.com/
 ;; * https://www.emacswiki.org/emacs/DotEmacsChallenge
+;; * https://github.com/pavpanchekha/dotfiles
 ;; * https://github.com/ashton314/newbie.el
 ;; * https://git.sr.ht/~ashton314/emacs-bedrock
+;; * https://github.com/mnewt/dotemacs
+;; * https://github.com/doomemacs/doomemacs
+;; * https://github.com/syl20bnr/spacemacs
 
-;; Don't use this config if emacs version is below 27.1
-(if (version< emacs-version "27.1")
-    (with-current-buffer " *load*"
-      (goto-char (point-max))))
+;; Things I always forge
+;; * `C-h k` is "describe next action"
 
-;; Shunt off generated code
-(setq custom-file (expand-file-name "~/.emacs.d/custom.el"))
-(load custom-file)
 
-;; MELPA
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "https://test.melpa.org/packages/") t)
-(package-initialize)
-
-;; My added packages
-(setq packages
-      `(
-        afternoon-theme
-        airline-themes
-        magit
-        markdown-mode
-        multiple-cursors
-        powerline
-        rust-mode
-        scad-mode
-        verilog-mode
-        use-package
-        ))
-
-;; Maybe refresh packages
-(unless package-archive-contents (package-refresh-contents))
-
-;; Install packages that are not on this machine
-(dolist (package packages)
-  (unless (package-installed-p package) (package-install package)))
-
-;; Autocomplete-like thing
-(ido-mode t)
-(setq ido-enable-flex-matching t)
-
-;; Remove menu bar
-(menu-bar-mode -1)
-
-;; Give better names when opening the same file in diff dirs
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'forward)
-
-;; Highlight matching parens
-(show-paren-mode 1)
-
-;; Don't use tabs
-;; TODO: what about files already using tabs?)
-(setq-default indent-tabs-mode nil)
-
-;; Force newline at end of file
-(setq require-final-newline t)
-
-;; Don't use stale files
-(setq load-prefer-newer t)
-
-;; Stop the backup files from being annoying
-(setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
-      backup-by-copying t    ; Don't delink hardlinks
-      version-control t      ; Use version numbers on backups
-      delete-old-versions t  ; Automatically delete excess backups
-      kept-new-versions 20   ; how many of the newest versions to keep
-      kept-old-versions 5)   ; and how many of the old
+;; +---------------------------------------------------------------------------+
+;; | Custom functions                                                          |
+;; +---------------------------------------------------------------------------+
 
 ;; Based on https://blog.lambda.cx/posts/emacs-align-columns
 (defun align-non-space (BEG END)
@@ -84,96 +27,218 @@
   (interactive "r")
   (align-regexp BEG END "\\(\\s-\\s-\\s-*\\)\\S-+" 1 2 t))
 
-;; Programming defaults
-(add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+;; Tell how to kill emacs
+(defun dont-kill-emacs ()
+  (interactive)
+  (error (substitute-command-keys "To exit emacs: \\[kill-emacs]")))
 
-;; Markdown customizations
-(add-hook 'markdown-mode-hook 'display-fill-column-indicator-mode)
-(add-hook 'markdown-mode-hook 'display-line-numbers-mode)
-(add-hook 'markdown-mode-hook 'flyspell-mode)
 
-;; Latex customizations
-(add-hook 'latex-mode-hook 'display-fill-column-indicator-mode)
-(add-hook 'latex-mode-hook 'display-line-numbers-mode)
-(add-hook 'latex-mode-hook 'flyspell-mode)
-(add-hook 'latex-mode-hook (lambda () (electric-indent-mode -1)))
+;; +---------------------------------------------------------------------------+
+;; | Configuration of emacs itself                                             |
+;; +---------------------------------------------------------------------------+
 
-;; Rust customizations
-(add-hook 'rust-mode-hook (setq display-fill-column-indicator-column 100))
+;; Shunt off generated code
+(setq custom-file (expand-file-name "~/.emacs.d/custom.el"))
+(load custom-file)
 
-;; FPCore customizations (just use scheme-mode)
-(add-to-list 'auto-mode-alist '("\\.fpcore\\'" . scheme-mode))
+;; Make emacs harder to exit than vim
+(global-set-key "\C-x\C-c" 'dont-kill-emacs)
 
-;; Use a matching text theme
-(require 'afternoon-theme)
-(load-theme 'afternoon t)
+;; Smoother scrolling in gui
+(when (display-graphic-p) (pixel-scroll-precision-mode))
 
-;; Turn on powerline
-(require 'airline-themes)
-(load-theme 'airline-angr t)
+;; Minimum width for line numbers
+(setq-default display-line-numbers-width 3)
 
-;; Put column number in the bottom bar
-(column-number-mode t)
-
-;; Skip startup screen
-(setf inhibit-startup-screen t
-      inhibit-startup-message t
-      inhibit-startup-echo-area-message t)
-
-;; Silence bell
-(setq ring-bell-function 'ignore)
+;; Don't use tabs
+;; TODO: What about files already using tabs?
+(setq-default indent-tabs-mode nil)
 
 ;; Set fill column to be 80
 (setq-default display-fill-column-indicator-column 80)
 
-;; Don't soft wrap lines
-(set-default 'truncate-lines t)
+;; Don't use stale files
+(setq-default load-prefer-newer t)
 
-;; Scratch buffer
-(setq initial-scratch-message "")
-(setq inhibit-startup-message t)
-(setq initial-major-mode 'fundamental-mode)
+;; 5MB ought to be enough for anyon
+(setq-default undo-limit 5242880)
 
-;; Preserve hard links to the file you’re editing
-;; (this is especially important if you edit system files).
-(setq backup-by-copying-when-linked t)
+;; Don't make `#file` files
+(setq-default create-lockfiles nil)
 
-;; Preserve the owner and group of the file you’re editing
-;; (this is especially important if you edit files as root).
-(setq backup-by-copying-when-mismatch t)
+;; Silence bell
+(setq-default ring-bell-function 'ignore)
 
-;; Muscle memory from terminal, which can't differentiate C-- and C-_
-(bind-key "C--" 'undo)
+;; Variables from startup.el
+(setq-default
+ auto-save-file-name-transforms '((".*" "~/.emacs.d/autosave/" t))
+ auto-save-list-file-prefix "~/.emacs.d/autosave/"
+ inhibit-default-init t
+ inhibit-splash-screen t
+ inhibit-startup-message t
+ inhibit-startup-screen t
+ initial-major-mode 'fundamental-mode
+ initial-scratch-message "")
 
-;; Always show trailing whitespace
-(setq-default show-trailing-whitespace t)
+;; Variables from paragraph.el
+(setq-default sentence-end-double-space nil)
 
-;; multiple cursors!
-(use-package multiple-cursors
-  :bind ("C-c C-SPC" . mc/edit-lines))
+;; MELPA
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "https://test.melpa.org/packages/") t)
+(package-initialize)
 
-;; Configurations only for the terminal version
-(unless (display-graphic-p)
+;; Install use-package, then it will install everything else
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
 
-  ;; Adds mouse support in terminal
-  (require 'mwheel)
-  (require 'mouse)
+;; Always install packages if not found, dunno what the second one does
+(setq use-package-always-ensure t)
+;;(setq use-package-expand-minimally t)
+
+;; Programming defaults
+(add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+
+;; Text defaults
+(add-hook 'text-mode-hook 'visual-line-mode)
+
+;; Keybindings
+(use-package bind-key
+  :config
+  (bind-key "C--" 'undo)
+  )
+
+
+;; +---------------------------------------------------------------------------+
+;; | Builtin packages                                                          |
+;; +---------------------------------------------------------------------------+
+
+;; Fix auto revert mode
+;; TODO: Might require investigating...
+;; may need auto-revert-notify-exclude-dir-regexp
+(use-package autorevert
+  :delight auto-revert-mode
+  :custom
+  (auto-revert-avoid-polling t)
+  (auto-revert-interval 5)
+  (auto-revert-check-vc-info t))
+
+;; Make vertical seperator pretty
+(use-package disp-table
+  :config (set-display-table-slot standard-display-table 5 ? ))
+
+;; Things from files.el
+(use-package files
+  :custom
+  (require-final-newline t)
+  (backup-directory-alist '(("." . "~/.emacs.d/backup")))
+  (backup-by-copying t)               ; Don't clobber symlinks
+  (backup-by-copying-when-linked t)   ; Don't break multiple hardlinks
+  (backup-by-copying-when-mismatch t) ; Preserve owner/groups
+  (version-control t)                 ; Use version numbers on backups
+  (delete-old-versions t)             ; Automatically delete excess backups
+  (kept-new-versions 20)              ; How many of the newest versions to keep
+  (kept-old-versions 5))              ; and how many of the old
+
+;; Autocomplete-like thing
+(use-package ido
+  :config (ido-mode t)
+  :custom
+  (ido-enable-flex-matching t))
+
+;; Add mouse support in terminal
+(use-package mouse
+  :unless (display-graphic-p)
+  :config
   (xterm-mouse-mode t)
-  (mouse-wheel-mode t)
+  (global-unset-key (kbd "<C-down-mouse-1>")))
 
-  ;; Make vertical seperator pretty
-  (set-display-table-slot standard-display-table 5 ? )
+;; ...and the wheel/touchpad
+(use-package mwheel
+  :unless (display-graphic-p)
+  :config (mouse-wheel-mode t)
+  :custom (mouse-wheel-tilt-scroll t))
 
-  )
+;; Simple settings
+(use-package simple
+  :config
+  (column-number-mode 1) ;; Put column number in the bottom bar
+  (show-paren-mode 1)) ;; Highlight matching parens
 
-;; Configurations only for the GUI version
-(when (display-graphic-p)
+;; If performance dies, turn off slow things
+(use-package so-long
+  :config (global-so-long-mode 1))
 
-  ;; Remove GUI only top bar
-  (tool-bar-mode -1)
+;; Don't display CPU load in the mode line
+(use-package time :custom (display-time-default-load-average nil))
 
-<  ;; Smoother scrolling
-  (pixel-scroll-precision-mode)
+;; Disable tool bar (gui thing)
+(use-package tool-bar :config (tool-bar-mode -1))
 
-  )
+;; Remote file editing
+(use-package tramp)
+
+;; Give better names when opening the same file in diff dirs
+(use-package uniquify :custom (uniquify-buffer-name-style 'forward))
+
+;; Backup in vc
+(use-package vc-hooks :custom (vc-make-backup-files t))
+
+;; Move through windows with meta-<arrow keys>
+(use-package windmove :config (windmove-default-keybindings 'meta))
+
+
+;; +---------------------------------------------------------------------------+
+;; | External packages                                                         |
+;; +---------------------------------------------------------------------------+
+
+;; Uses system clipboard from terminal
+(use-package clipetty
+  :unless (display-graphic-p)
+  :config (clipetty-mode 1))
+
+;; Change minor mode names
+(use-package delight)
+
+;; Garbage collection
+(use-package gcmh
+  :delight
+  :demand t
+  :config (gcmh-mode 1))
+
+;; Magit
+(use-package magit)
+
+;; Multiple cursors!
+(use-package multiple-cursors :bind ("C-c C-SPC" . mc/edit-lines))
+
+;; Show keybindings as autocomplete
+(use-package which-key :config (which-key-mode 1))
+
+
+;; +---------------------------------------------------------------------------+
+;; | Languages                                                                 |
+;; +---------------------------------------------------------------------------+
+
+;; Markdown
+(use-package markdown-mode)
+
+;; Open SCAD
+(use-package scad-mode)
+
+;; Verilog
+(use-package verilog-mode)
+
+
+;; +---------------------------------------------------------------------------+
+;; | Themes                                                                    |
+;; +---------------------------------------------------------------------------+
+
+;; Turn on powerline
+(use-package airline-themes :config (load-theme 'airline-angr t))
+
+;; Use a matching text theme
+(use-package afternoon-theme :config (load-theme 'afternoon t))
