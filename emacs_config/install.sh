@@ -16,6 +16,7 @@ fi
 mkdir "${HOME}/.emacs.d"
 ln -s  "${SCRIPT_LOCATION}/early-init.el" "${HOME}/.emacs.d/early-init.el"
 ln -s  "${SCRIPT_LOCATION}/init.el" "${HOME}/.emacs.d/init.el"
+touch "${SCRIPT_LOCATION}/custom.el"
 
 # Warn the user of unusual next start
-echo "The first time you launch emacs will take a while to download all new packages."
+echo "Next time you start emacs it will download any new packages."

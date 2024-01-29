@@ -13,9 +13,10 @@
 ;; * https://github.com/doomemacs/doomemacs
 ;; * https://github.com/syl20bnr/spacemacs
 
-;; Things I always forge
+;; Things I always forget
 ;; * `C-h k` is "describe next action"
-
+;; * `C-h m` is "show all active minor modes and major mode"
+;; * `C-h l` is "describe last action"
 
 ;; +---------------------------------------------------------------------------+
 ;; | Custom functions                                                          |
@@ -42,7 +43,7 @@
 (load custom-file)
 
 ;; Make emacs harder to exit than vim
-(global-set-key "\C-x\C-c" 'dont-kill-emacs)
+;;(global-set-key "\C-x\C-c" 'dont-kill-emacs)
 
 ;; Smoother scrolling in gui
 (when (display-graphic-p) (pixel-scroll-precision-mode))
@@ -68,6 +69,9 @@
 
 ;; Silence bell
 (setq-default ring-bell-function 'ignore)
+
+;; Don't wrap lines. Use `visual-line-mode` if you want that
+(setq-default truncate-lines t)
 
 ;; Variables from startup.el
 (setq-default
@@ -96,7 +100,6 @@
 
 ;; Always install packages if not found, dunno what the second one does
 (setq use-package-always-ensure t)
-;;(setq use-package-expand-minimally t)
 
 ;; Programming defaults
 (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
@@ -116,79 +119,96 @@
 ;; | Builtin packages                                                          |
 ;; +---------------------------------------------------------------------------+
 
-;; Fix auto revert mode
-;; TODO: Might require investigating...
-;; may need auto-revert-notify-exclude-dir-regexp
+;; Disable auto revert mode by default
 (use-package autorevert
+  :after magit
   :delight auto-revert-mode
-  :custom
-  (auto-revert-avoid-polling t)
-  (auto-revert-interval 5)
-  (auto-revert-check-vc-info t))
+  :custom (add-hook 'after-init-hook (lambda () (global-auto-revert-mode -1))))
 
 ;; Make vertical seperator pretty
+;; TODO: can I replace the weird unicode in my init?
 (use-package disp-table
+  :ensure nil
+  :unless (display-graphic-p)
   :config (set-display-table-slot standard-display-table 5 ? ))
 
 ;; Things from files.el
 (use-package files
+  :ensure nil
+  :config
+  (add-to-list 'auto-mode-alist '("\\.fpcore\\'" . scheme-mode))
+  (add-to-list 'auto-mode-alist '("\\.f\\'" . fundamental-mode))
   :custom
   (require-final-newline t)
   (backup-directory-alist '(("." . "~/.emacs.d/backup")))
-  (backup-by-copying t)               ; Don't clobber symlinks
-  (backup-by-copying-when-linked t)   ; Don't break multiple hardlinks
-  (backup-by-copying-when-mismatch t) ; Preserve owner/groups
-  (version-control t)                 ; Use version numbers on backups
-  (delete-old-versions t)             ; Automatically delete excess backups
-  (kept-new-versions 20)              ; How many of the newest versions to keep
-  (kept-old-versions 5))              ; and how many of the old
+  (backup-by-copying t)               ;; Don't clobber symlinks
+  (backup-by-copying-when-linked t)   ;; Don't break multiple hardlinks
+  (backup-by-copying-when-mismatch t) ;; Preserve owner/groups
+  (version-control t)                 ;; Use version numbers on backups
+  (delete-old-versions t)             ;; Automatically delete excess backups
+  (kept-new-versions 20)              ;; How many of the newest versions to keep
+  (kept-old-versions 5))              ;; and how many of the old
 
 ;; Autocomplete-like thing
 (use-package ido
   :config (ido-mode t)
-  :custom
-  (ido-enable-flex-matching t))
+  :custom (ido-enable-flex-matching t))
 
-;; Add mouse support in terminal
-(use-package mouse
-  :unless (display-graphic-p)
-  :config
-  (xterm-mouse-mode t)
-  (global-unset-key (kbd "<C-down-mouse-1>")))
+;; Finish menu bar deactivation from early-init.el
+(use-package menu-bar
+  :ensure nil
+  :config (menu-bar-mode -1))
 
-;; ...and the wheel/touchpad
+;; Add wheel/touchpad support in terminal
 (use-package mwheel
+  :ensure nil
   :unless (display-graphic-p)
   :config (mouse-wheel-mode t)
   :custom (mouse-wheel-tilt-scroll t))
 
 ;; Simple settings
 (use-package simple
+  :ensure nil
   :config
   (column-number-mode 1) ;; Put column number in the bottom bar
-  (show-paren-mode 1)) ;; Highlight matching parens
+  (show-paren-mode 1))   ;; Highlight matching parens
 
 ;; If performance dies, turn off slow things
 (use-package so-long
   :config (global-so-long-mode 1))
 
 ;; Don't display CPU load in the mode line
-(use-package time :custom (display-time-default-load-average nil))
+(use-package time
+  :custom (display-time-default-load-average nil))
 
 ;; Disable tool bar (gui thing)
-(use-package tool-bar :config (tool-bar-mode -1))
+(use-package tool-bar
+  :ensure nil
+  :config (tool-bar-mode -1))
 
 ;; Remote file editing
 (use-package tramp)
 
 ;; Give better names when opening the same file in diff dirs
-(use-package uniquify :custom (uniquify-buffer-name-style 'forward))
+(use-package uniquify
+  :ensure nil
+  :custom (uniquify-buffer-name-style 'forward))
 
 ;; Backup in vc
-(use-package vc-hooks :custom (vc-make-backup-files t))
+(use-package vc-hooks
+  :ensure nil
+  :custom (vc-make-backup-files t))
 
 ;; Move through windows with meta-<arrow keys>
-(use-package windmove :config (windmove-default-keybindings 'meta))
+(use-package windmove
+  :config (windmove-default-keybindings 'meta))
+
+;; Add mouse support in terminal
+(use-package xt-mouse
+  :unless (display-graphic-p)
+  :config
+  (xterm-mouse-mode t)
+  (global-unset-key (kbd "<C-down-mouse-1>"))) ;; Allow ctrl+click for hyperlink
 
 
 ;; +---------------------------------------------------------------------------+
@@ -197,8 +217,9 @@
 
 ;; Uses system clipboard from terminal
 (use-package clipetty
+  :delight
   :unless (display-graphic-p)
-  :config (clipetty-mode 1))
+  :hook (after-init . global-clipetty-mode))
 
 ;; Change minor mode names
 (use-package delight)
@@ -210,13 +231,18 @@
   :config (gcmh-mode 1))
 
 ;; Magit
-(use-package magit)
+(use-package magit
+  ;:disabled
+  :config (magit-auto-revert-mode -1))
 
 ;; Multiple cursors!
-(use-package multiple-cursors :bind ("C-c C-SPC" . mc/edit-lines))
+(use-package multiple-cursors
+  :bind ("C-c C-SPC" . mc/edit-lines))
 
 ;; Show keybindings as autocomplete
-(use-package which-key :config (which-key-mode 1))
+(use-package which-key
+  :delight
+  :config (which-key-mode 1))
 
 
 ;; +---------------------------------------------------------------------------+
@@ -224,21 +250,30 @@
 ;; +---------------------------------------------------------------------------+
 
 ;; Markdown
-(use-package markdown-mode)
+(use-package markdown-mode
+  :mode "\\.md\\'"
+  :config (add-hook 'markdown-mode-hook 'flyspell-mode))
 
 ;; Open SCAD
-(use-package scad-mode)
+(use-package scad-mode
+  :mode "\\.scad\\'")
 
 ;; Verilog
-(use-package verilog-mode)
+(use-package verilog-mode
+  :mode ("\\.v\\'" "\\.sv\\'" "\\.sva\\'" "\\.svh\\'"))
 
+;; YAML
+(use-package yaml-mode
+  :mode "\\.yaml\\'")
 
 ;; +---------------------------------------------------------------------------+
 ;; | Themes                                                                    |
 ;; +---------------------------------------------------------------------------+
 
 ;; Turn on powerline
-(use-package airline-themes :config (load-theme 'airline-angr t))
+(use-package airline-themes
+  :config (load-theme 'airline-angr t))
 
 ;; Use a matching text theme
-(use-package afternoon-theme :config (load-theme 'afternoon t))
+(use-package afternoon-theme
+  :config (load-theme 'afternoon t))
